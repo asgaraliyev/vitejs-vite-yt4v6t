@@ -32,14 +32,14 @@ export function onImportF(str) {
       item.timeEndIndex = a.indexOf(']');
       item.timeStr = a.substring(item.timeStartIndex + 1, item.timeEndIndex);
       a = a.replace(item.timeStr, '').replace('[', '').replace(']', '');
-      item.authorNameEndsAt = a.substring(item.timeEndIndex).indexOf(':');
-      item.authorName = a
-        .substring(item.timeEndIndex, item.authorNameEndsAt)
-        .replace(' ', '')
-        .replace(':', '')
-        .replace(' ', '');
-      item.author_id = checkAuthor(item.authorName);
+      item.authorName = a.replace(`[${item.timeStr}]`, '');
+      item.authorName = item.authorName.split(':')[0];
 
+      item.authorName = item.authorName.replace(':', '').replace(' ', '');
+      item.author_id = checkAuthor(item.authorName);
+      console.log(
+        item.str.replace(item.authorName, '').replace(item.timeStr, '')
+      );
       item.tagsArea = item.str
         .replace(item.authorName, '')
         .replace(item.timeStr, '')
@@ -86,7 +86,7 @@ export function onImportF(str) {
       item.time = item.timeStr.substring(item.timeSpliterIndex);
       item.time = item.time.replace(',', '').trim();
       item.date = `${item.dateObj.day}/${item.dateObj.month}/${item.dateObj.year} ${item.time}`;
-      item.date = moment(item.date, 'DD/MM/YYYY hh:mm a').toDate();
+      // item.date = moment(item.date, 'DD/MM/YYYY hh:mm a').toDate();
       delete item.time;
       delete item.timeSpliterIndex;
       delete item.timeStr;
