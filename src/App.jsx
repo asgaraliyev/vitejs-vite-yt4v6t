@@ -2,6 +2,7 @@ import { useState } from 'react';
 import reactLogo from './assets/react.svg';
 import './App.css';
 import React from 'react';
+import moment from 'moment';
 function App() {
   const [str, setStr] = React.useState(`
   [1/29, 7:13 PM] AsgarAliyev: #year=2023
@@ -26,7 +27,7 @@ function App() {
       return new_author._id;
     }
 
-    const items = str
+    const commands = str
       .split('\n')
       .filter((a) => a)
       .map((a, _id) => {
@@ -59,12 +60,12 @@ function App() {
           })
           .filter((a) => a);
         item.tags = item.allTags.filter((a) => !a.includes('='));
-        item.commands = item.allTags
+        item.flags = item.allTags
           .filter((a) => a.includes('='))
-          .map((command) => {
+          .map((flag) => {
             return {
-              name: command.split('=')[0],
-              value: command.split('=')[1],
+              name: flag.split('=')[0],
+              value: flag.split('=')[1],
             };
           });
         delete item.authorName;
@@ -74,20 +75,35 @@ function App() {
         delete item.str;
         delete item.allTags;
         delete item.tagsArea;
-        item.commands.map((command) => {
-          if (command.name === 'a') {
-            item.amount = parseFloat(command.value);
-          } else if (command.name === 'p') {
-            item.priority = parseFloat(command.value);
-          } else if (command.name === 'year') {
-            year = parseFloat(command.value);
+        item.flags.map((flag) => {
+          if (flag.name === 'a') {
+            item.amount = parseFloat(flag.value);
+          } else if (flag.name === 'p') {
+            item.priority = parseFloat(flag.value);
+          } else if (flag.name === 'year') {
+            year = parseFloat(flag.value);
           }
         });
-
+        item.dateObj = {
+          month: parseInt(item.timeStr.split('/')[0]),
+          day: parseInt(item.timeStr.split(',')[0].split('/')[1]),
+          year,
+        };
+        item.timeSpliterIndex = item.timeStr.indexOf(',');
+        item.time = item.timeStr.substring(item.timeSpliterIndex);
+        item.time = item.time.replace(',', '').trim();
+        item.date = `${item.dateObj.day}/${item.dateObj.month}/${item.dateObj.year} ${item.time}`;
+        item.date = moment(item.date, 'DD/MM/YYYY hh:mm a').toDate();
+        delete item.time;
+        delete item.timeSpliterIndex;
+        delete item.timeStr;
+        delete item.dateObj;
         return item;
       });
-    console.log(JSON.stringify({ year, items, authors }, null, 1));
   }
+  React.useEffect(() => {
+    onImport(str);
+  }, []);
   return (
     <div>
       <textarea
