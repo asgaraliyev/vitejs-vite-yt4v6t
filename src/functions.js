@@ -68,15 +68,15 @@ export function onImportF(str) {
       delete item.str;
       delete item.allTags;
       delete item.tagsArea;
-      // item.flags.map((flag) => {
-      //   if (flag.name === 'a') {
-      //     item.amount = parseFloat(flag.value);
-      //   } else if (flag.name === 'p') {
-      //     item.priority = parseFloat(flag.value);
-      //   } else if (flag.name === 'year') {
-      //     year = parseFloat(flag.value);
-      //   }
-      // });
+      item.flags.map((flag) => {
+        if (flag.name === 'a') {
+          // item.amount = parseFloat(flag.value);
+        } else if (flag.name === 'p') {
+          // item.priority = parseFloat(flag.value);
+        } else if (flag.name === 'year') {
+          year = parseFloat(flag.value);
+        }
+      });
       item.dateObj = {
         month: parseInt(item.timeStr.split('/')[0]),
         day: parseInt(item.timeStr.split(',')[0].split('/')[1]),
